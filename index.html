@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music Lyricized</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23e6222f%22/><text x=%2250%22 y=%2266%22 font-size=%2258%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial%22>M</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0c0a0e;
+    --panel: #17141b;
+    --panel-2: #1e1a22;
+    --red: #e6222f;
+    --gold: #f2b705;
+    --ink: #f5f1e8;
+    --muted: #9c93a3;
+    --line: rgba(245,241,232,0.09);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Manrope',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;display:block;}
+  a{color:inherit;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+
+  /* subtle background texture */
+  body{
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(230,34,47,0.14), transparent 40%),
+      radial-gradient(circle at 90% 0%, rgba(242,183,5,0.10), transparent 45%);
+  }
+
+  /* ---------- Nav ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(12,10,14,0.82);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 0;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:26px; letter-spacing:0.5px;
+  }
+  .brand .mark{
+    width:34px;height:34px;border-radius:9px;
+    background:var(--red);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Bebas Neue',sans-serif;font-size:20px;
+    flex-shrink:0;
+  }
+  .navlinks{display:flex;gap:28px;font-size:15px;font-weight:600;}
+  .navlinks a{opacity:0.75;text-decoration:none;transition:opacity .15s;}
+  .navlinks a:hover{opacity:1;}
+  .navlinks{display:none;}
+  @media(min-width:720px){.navlinks{display:flex;}}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:76px 0 60px;
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    gap:40px;
+    align-items:center;
+  }
+  @media(max-width:860px){.hero{grid-template-columns:1fr;padding:48px 0 20px;}}
+
+  .hero h1{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(48px,8vw,84px);
+    line-height:0.98;
+    margin:0 0 20px;
+    letter-spacing:0.5px;
+  }
+  .hero h1 span{color:var(--red);}
+  .hero p.lede{
+    font-size:18px;
+    color:var(--muted);
+    max-width:46ch;
+    margin:0 0 30px;
+  }
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:13px 26px;border-radius:8px;
+    font-weight:700;font-size:15px;
+    text-decoration:none;
+    border:1px solid transparent;
+    transition:transform .15s ease, background .15s ease;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn.primary{background:var(--red);color:#fff;}
+  .btn.primary:hover{background:#ff3644;}
+  .btn.ghost{border-color:var(--line);color:var(--ink);}
+  .btn.ghost:hover{border-color:rgba(245,241,232,0.3);}
+
+  /* Hero lyric-card stack */
+  .card-stack{position:relative;height:380px;}
+  .lyric-card{
+    position:absolute;
+    width:230px;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.45);
+    font-size:14px;
+  }
+  .lyric-card .tag{
+    font-size:11px;font-weight:800;
+    background:rgba(0,0,0,0.35);
+    display:inline-block;padding:3px 9px;border-radius:5px;
+    margin-bottom:10px;
+  }
+  .lyric-card .track{font-weight:800;font-size:15px;margin-bottom:2px;}
+  .lyric-card .artist{font-size:12px;opacity:0.75;margin-bottom:14px;}
+  .lyric-card .bars{display:flex;gap:4px;align-items:flex-end;height:26px;}
+  .lyric-card .bars i{
+    width:4px;background:currentColor;opacity:0.55;border-radius:2px;
+    animation:eq 1.4s ease-in-out infinite;
+  }
+  @keyframes eq{0%,100%{height:20%;}50%{height:100%;}}
+
+  .lc1{background:linear-gradient(160deg,#3a1620,#1c0d12);color:#ffd9d9; top:10px; left:10px; transform:rotate(-7deg); z-index:2;}
+  .lc2{background:linear-gradient(160deg,#1b2a4a,#101a30);color:#cfe0ff; top:70px; left:120px; transform:rotate(5deg); z-index:3;}
+  .lc3{background:linear-gradient(160deg,#3d2f06,#241c04);color:#ffe9a8; top:190px; left:40px; transform:rotate(-3deg); z-index:1;}
+  @media(max-width:860px){.card-stack{height:300px;}.lyric-card{width:190px;padding:16px;}.lc2{left:100px;}.lc3{left:20px;top:170px;}}
+
+  /* ---------- Section shell ---------- */
+  section{padding:64px 0;}
+  .section-head{margin-bottom:34px;}
+  .section-head h2{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(32px,5vw,44px);
+    margin:0 0 8px;
+  }
+  .section-head p{color:var(--muted);margin:0;max-width:58ch;}
+  .divider{height:1px;background:var(--line);border:none;margin:0;}
+
+  /* ---------- Drops grid ---------- */
+  .drops{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:18px;
+  }
+  .drop{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .drop:hover{border-color:rgba(230,34,47,0.4);transform:translateY(-3px);}
+  .drop .num{font-family:'Bebas Neue',sans-serif;color:var(--red);font-size:22px;}
+  .drop h3{margin:10px 0 4px;font-size:18px;}
+  .drop .by{color:var(--muted);font-size:13px;margin-bottom:14px;}
+  .drop .stat{
+    display:flex;align-items:center;gap:6px;
+    font-size:13px;color:var(--muted);
+    border-top:1px solid var(--line);
+    padding-top:12px;margin-top:4px;
+  }
+  .drop .stat b{color:var(--ink);font-weight:700;}
+
+  /* ---------- About ---------- */
+  .about{
+    display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;
+  }
+  @media(max-width:860px){.about{grid-template-columns:1fr;}}
+  .about p{color:var(--muted);font-size:16px;margin:0 0 16px;max-width:52ch;}
+  .stats-row{display:flex;gap:32px;margin-top:26px;flex-wrap:wrap;}
+  .stat-block .n{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--gold);line-height:1;}
+  .stat-block .l{font-size:13px;color:var(--muted);margin-top:4px;}
+
+  .waveform{
+    display:flex;align-items:center;gap:3px;height:180px;
+    padding:20px;background:var(--panel);border-radius:14px;border:1px solid var(--line);
+  }
+  .waveform i{
+    flex:1;background:linear-gradient(180deg,var(--red),var(--gold));
+    border-radius:3px;opacity:0.85;
+  }
+
+  /* ---------- Follow ---------- */
+  .follow-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;
+  }
+  .follow-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:24px;text-decoration:none;color:var(--ink);
+    display:flex;flex-direction:column;gap:10px;
+    transition:transform .15s ease, border-color .15s ease;
+  }
+  .follow-card:hover{transform:translateY(-3px);border-color:rgba(245,241,232,0.25);}
+  .follow-card .icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+  .follow-card .platform{font-weight:800;font-size:16px;}
+  .follow-card .handle{color:var(--muted);font-size:14px;}
+
+  /* ---------- Footer ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:32px 0;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+    color:var(--muted);font-size:13px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .lyric-card .bars i{animation:none;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="brand"><span class="mark">M</span>MUSIC LYRICIZED</div>
+      <div class="navlinks">
+        <a href="#drops">Drops</a>
+        <a href="#about">About</a>
+        <a href="#follow">Follow</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap" style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:40px;align-items:center;">
+    <div>
+      <h1>Lyrics that<br>hit <span>different.</span></h1>
+      <p class="lede">Daily lyric cards and quick takes on the tracks worth hearing — the lines people screenshot and send to their group chat.</p>
+      <div class="cta-row">
+        <a class="btn primary" href="#drops">See the latest drops</a>
+        <a class="btn ghost" href="https://tiktok.com/@musiclyricized" target="_blank" rel="noopener">Watch on TikTok</a>
+      </div>
+    </div>
+    <div class="card-stack">
+      <div class="lyric-card lc1">
+        <span class="tag">NOW TRENDING</span>
+        <div class="track">Late Night Drive</div>
+        <div class="artist">an unreleased favorite</div>
+        <div class="bars"><i style="animation-delay:.0s"></i><i style="animation-delay:.2s"></i><i style="animation-delay:.4s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.3s"></i></div>
+      </div>
+      <div class="lyric-card lc2">
+        <span class="tag">FAN PICK</span>
+        <div class="track">Golden Hour</div>
+        <div class="artist">this week's most saved</div>
+        <div class="bars"><i style="animation-delay:.1s"></i><i style="animation-delay:.3s"></i><i style="animation-delay:.0s"></i><i style="animation-delay:.4s"></i><i style="animation-delay:.2s"></i></div>
+      </div>
+      <div class="lyric-card lc3">
+        <span class="tag">NEW REVIEW</span>
+        <div class="track">Better Days</div>
+        <div class="artist">rated 4.5 / 5</div>
+        <div class="bars"><i style="animation-delay:.2s"></i><i style="animation-delay:.0s"></i><i style="animation-delay:.3s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.4s"></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="drops">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Latest drops</h2>
+      <p>A running feed of the lyric cards and reviews going up on Instagram and TikTok this week.</p>
+    </div>
+    <div class="drops">
+      <div class="drop"><span class="num">01</span><h3>Fancy</h3><div class="by">Drake, feat. T.I. &amp; Swizz Beatz</div><div class="stat">👁 <b>42.3K</b> views</div></div>
+      <div class="drop"><span class="num">02</span><h3>No Love</h3><div class="by">Shubh</div><div class="stat">👁 <b>7,356</b> views</div></div>
+      <div class="drop"><span class="num">03</span><h3>Starboy</h3><div class="by">The Weeknd, feat. Daft Punk</div><div class="stat">👁 <b>7,074</b> views</div></div>
+      <div class="drop"><span class="num">04</span><h3>Passionfruit</h3><div class="by">Drake</div><div class="stat">👁 <b>5,976</b> views</div></div>
+      <div class="drop"><span class="num">05</span><h3>Cheques</h3><div class="by">Shubh</div><div class="stat">👁 <b>5,228</b> views</div></div>
+      <div class="drop"><span class="num">06</span><h3>New this week</h3><div class="by">More drops coming soon</div><div class="stat">👁 posting daily</div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="about">
+  <div class="wrap about">
+    <div>
+      <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,44px);margin:0 0 16px;">The best music &amp; reviews.</h2>
+      <p>Music Lyricized turns songs into lyric cards worth stopping to read — the lines that carry a track, styled the way you'd want to post them.</p>
+      <p>Every post is a track we actually listened to, picked for the line that makes people replay it. New drops go up daily across Instagram and TikTok.</p>
+      <div class="stats-row">
+        <div class="stat-block"><div class="n">55</div><div class="l">posts and counting</div></div>
+        <div class="stat-block"><div class="n">155</div><div class="l">followers</div></div>
+        <div class="stat-block"><div class="n">daily</div><div class="l">new drops</div></div>
+      </div>
+    </div>
+    <div class="waveform" aria-hidden="true">
+      <i style="height:30%"></i><i style="height:55%"></i><i style="height:40%"></i><i style="height:80%"></i>
+      <i style="height:60%"></i><i style="height:95%"></i><i style="height:50%"></i><i style="height:70%"></i>
+      <i style="height:35%"></i><i style="height:65%"></i><i style="height:45%"></i><i style="height:85%"></i>
+      <i style="height:55%"></i><i style="height:30%"></i><i style="height:75%"></i><i style="height:40%"></i>
+      <i style="height:90%"></i><i style="height:50%"></i><i style="height:60%"></i><i style="height:35%"></i>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="follow">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Find us elsewhere</h2>
+      <p>Everything posts to Instagram and TikTok first — this page just points you there.</p>
+    </div>
+    <div class="follow-grid">
+      <a class="follow-card" href="https://instagram.com/musiclyricized" target="_blank" rel="noopener">
+        <div class="icon" style="background:linear-gradient(135deg,#e6222f,#f2b705);">📷</div>
+        <div class="platform">Instagram</div>
+        <div class="handle">@musiclyricized</div>
+      </a>
+      <a class="follow-card" href="https://tiktok.com/@musiclyricized" target="_blank" rel="noopener">
+        <div class="icon" style="background:#17141b;border:1px solid var(--line);">🎵</div>
+        <div class="platform">TikTok</div>
+        <div class="handle">@musiclyricized</div>
+      </a>
+      <a class="follow-card" href="https://github.com/musiclyricized" target="_blank" rel="noopener">
+        <div class="icon" style="background:#17141b;border:1px solid var(--line);">💻</div>
+        <div class="platform">GitHub</div>
+        <div class="handle">musiclyricized</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="display:flex;justify-content:space-between;width:100%;flex-wrap:wrap;gap:12px;">
+    <span>© 2026 Music Lyricized</span>
+    <span>Built for fans of good lines.</span>
+  </div>
+</footer>
+
+</body>
+</html>
